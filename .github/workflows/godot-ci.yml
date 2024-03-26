@@ -28,7 +28,7 @@ jobs:
       - name: Re-import assets
         run: |
           cd $PROJECT_PATH
-          godot --headless --editor --quit
+          godot --editor --rendering-driver opengl3 --rendering-engine opengl3 --quit
       - name: ${{matrix.os}} Build
         run: |
           mkdir -v -p build/${{matrix.os}}
