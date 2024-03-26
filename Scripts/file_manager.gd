@@ -4,7 +4,7 @@ extends Node2D
 @onready var Code: CodeEdit = %Code;
 @onready var file_dialog = %FileDialog
 @onready var canvas_layer: CanvasLayer = $CanvasLayer
-const NOTICE = preload("res://Scenes/notice.tscn")
+const NOTICE = preload ("res://Scenes/notice.tscn")
 
 var current_file: String;
 var current_dir: String = "/";
@@ -21,11 +21,12 @@ func _ready():
 		DiscordSDK.large_image_text = "https://github.com/face-hh/griddycode"
 		DiscordSDK.start_timestamp = int(Time.get_unix_time_from_system())
 	var running_on_gaming_os = OS.get_name() == "Windows"
+
 	if running_on_gaming_os:
-		current_dir = "C:/"
+		# start in the downloads folder
+		current_dir = OS.get_environment("USERPROFILE") + "\\downloads"
 
 	var args = OS.get_cmdline_args()
-	var is_debug = OS.is_debug_build()
 	var path = []
 	# in order to be compatible with the gayming OS...
 	var pwd_cmd = "pwd"
@@ -53,14 +54,14 @@ func _ready():
 
 	LuaSingleton.themes = list_themes()
 
-	LuaSingleton.setup_extension(current_file.split(".")[-1])
+	LuaSingleton.setup_extension(current_file.split(".")[ - 1])
 	LuaSingleton.setup_theme(LuaSingleton.theme)
 
 	file_dialog.setup()
 
 	if !current_file:
 		LuaSingleton.setup_discord_sdk("Idle", "")
-		Code.toggle(%FileDialog)
+		Code.toggle( %FileDialog)
 		warn("Welcome to [color=#c9daf8]Bussin[/color] [color=#85c6ff]GriddyCode[/color]! Please select a file, then press CTRL + I to get started! :D")
 
 func check_for_reserved() -> void:
@@ -113,7 +114,7 @@ func warn(notice: String) -> void:
 	)
 
 func open_file(path: String) -> void:
-	LuaSingleton.setup_discord_sdk("Editing " + path.split("/")[-1], "In " + current_dir.split("/")[-1])
+	LuaSingleton.setup_discord_sdk("Editing " + path.split("/")[ - 1], "In " + current_dir.split("/")[ - 1])
 
 	var src = Fs._load(path)
 
@@ -134,7 +135,7 @@ func list_themes() -> Array:
 func get_property_value(settings: Array) -> Array:
 	var out := []
 	for setting in settings:
-		out.append({ "property": setting.property, "value": setting.value })
+		out.append({"property": setting.property, "value": setting.value})
 	return out
 
 func _notification(what):
@@ -161,7 +162,7 @@ func save_data(dict: Dictionary):
 
 	save_game.store_line(json_string)
 
-func load_game(cli: bool = false):
+func load_game(cli: bool=false):
 	if not FileAccess.file_exists("user://data.save"):
 		return # Error! We don't have a save to load.
 
@@ -191,14 +192,13 @@ func load_game(cli: bool = false):
 
 			var index = LuaSingleton.get_setting(dic.property)[1]
 
-			if index == -1:
+			if index == - 1:
 				print("WARNING: Omitted setting \"%s\" due to finding operation failing." % dic.property)
 				return
 
 			LuaSingleton.settings[index].value = dic.value
 
 		LuaSingleton.on_settings_change.emit()
-
 
 func _on_auto_save_timer_timeout():
 	if !current_file: return
@@ -216,7 +216,6 @@ func preview_theme(index: int) -> void:
 
 func _on_theme_chooser_item_focused(index):
 	preview_theme(index)
-
 
 func _on_theme_chooser_item_selected(index):
 	preview_theme(index)
