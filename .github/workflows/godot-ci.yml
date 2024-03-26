@@ -11,8 +11,7 @@ jobs:
     name: ${{matrix.os}} Export
     strategy:
       matrix:
-        os: [windows, linux, macOS]
-        export_os: ["Windows Desktop", "Linux/X11", "Mac OSX"]
+        os: ["Windows Desktop", "Linux/X11", "Mac OSX"]
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
@@ -25,12 +24,13 @@ jobs:
         with:
           use-dotnet: false
           version: 4.2.1
+          include-templates: true # we need these
 
       - name: Windows Build
         run: |
           mkdir -v -p build/${{matrix.os}}
           cd $PROJECT_PATH
-          godot --headless --export-debug --verbose "${{matrix.export_os}}" ../build/windows/$EXPORT_NAME.exe
+          godot --headless --export-debug --verbose "${{matrix.os}}" ../build/windows/$EXPORT_NAME.exe
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
