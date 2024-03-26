@@ -19,14 +19,14 @@ jobs:
         with:
           lfs: true
 
-      - name: Setup Godot Action
+      - name: Setup Godot
         uses: chickensoft-games/setup-godot@v2.0.1
         with:
           use-dotnet: false
           version: 4.2.1
           include-templates: true # we need these
 
-      - name: Windows Build
+      - name: ${{matrix.os}} Build
         run: |
           mkdir -v -p build/${{matrix.os}}
           cd $PROJECT_PATH
@@ -35,4 +35,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{matrix.os}}
-          path: build/${{matrix}}
+          path: build/${{matrix.os}}
