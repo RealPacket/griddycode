@@ -1,7 +1,7 @@
 ---
 name: Add Lua plugin
 about: Add support for a file extension / language
-title: '[Lua] <title>'
+title: '[Lua Plugin] <title>'
 labels: Lua, LuaPlugin
 ---
 
