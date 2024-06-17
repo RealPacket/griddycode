@@ -16,13 +16,6 @@ jobs:
         with:
           lfs: true
 
-      - name: Setup Godot
-        uses: chickensoft-games/setup-godot@v2.0.1
-        with:
-          use-dotnet: false
-          version: 4.2.1
-          include-templates: true # we need these
-
       - name: Install wine
         id: wine_install
         run: |
