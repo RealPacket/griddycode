@@ -1,4 +1,4 @@
-name: "godot-ci export"
+name: "Export project"
 on: push
 
 env:
@@ -8,10 +8,7 @@ env:
 
 jobs:
   export:
-    name: ${{matrix.os}} Export
-    strategy:
-      matrix:
-        os: ["Windows Desktop", "Linux/X11", "Mac OSX"]
+    name: Export
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
@@ -25,13 +22,26 @@ jobs:
           use-dotnet: false
           version: 4.2.1
           include-templates: true # we need these
-      - name: ${{matrix.os}} Build
-        run: |
-          mkdir -v -p build/${{matrix.os}}
-          cd $PROJECT_PATH
-          godot --headless --export-debug --verbose "${{matrix.os}}" ../build/${{matrix.os}}/$EXPORT_NAME.exe
+
+      - name: Install wine
+        id: wine_install
+        run:
+          sudo apt install wine64
+          echo "WINE_PATH=$(which wine64)" >> $GITHUB_OUTPUT
+
+      - name: Export
+        id: export
+        uses: firebelley/godot-export@v5.2.1
+        with:
+          # Defining all the required inputs
+          godot_executable_download_url: https://github.com/godotengine/godot-builds/releases/download/4.2.2-rc2/Godot_v4.2.2-rc2_linux.x86_64.zip
+          godot_export_templates_download_url: https://github.com/godotengine/godot-builds/releases/download/4.2.2-rc2/Godot_v4.2.2-rc2_export_templates.tpz
+          relative_project_path: .
+          archive_output: true
+          wine_path: ${{ steps.wine_install.outputs.WINE_PATH }}
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{matrix.os}}
-          path: build/${{matrix.os}}
+          name: Archive Directory
+          path: ${{ steps.export.outputs.archive_directory }}
